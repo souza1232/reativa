@@ -33,7 +33,7 @@ function getSupabase() {
 export default function RelatoriosPage() {
   const { user } = useAuth();
 
-  const [monthly, setMonthly] = useState<{ month: string; reativacoes: number }[]>([]);
+  const [monthly, setMonthly] = useState<{ month: string; total: number }[]>([]);
   const [revenue, setRevenue] = useState<{ month: string; receita: number }[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignStat[]>([]);
   const [totalContacts, setTotalContacts] = useState(0);
@@ -97,12 +97,12 @@ export default function RelatoriosPage() {
 
   const combined = monthly.map((m, i) => ({
     month: m.month,
-    reativacoes: m.reativacoes,
+    reativacoes: m.total,
     receita: revenue[i]?.receita ?? 0,
   }));
 
   const totalRevenue = revenue.reduce((a, b) => a + b.receita, 0);
-  const totalReactivations = monthly.reduce((a, b) => a + b.reativacoes, 0);
+  const totalReactivations = monthly.reduce((a, b) => a + b.total, 0);
   const avgPerContact = totalReactivations > 0 ? Math.round(totalRevenue / totalReactivations) : 0;
   const reactivationRate = totalContacts > 0 ? Math.round((reactivatedCount / totalContacts) * 100) : 0;
 
