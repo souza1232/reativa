@@ -10,32 +10,37 @@
 import "dotenv/config";
 import { startWorker } from "../lib/queue";
 
-console.log("🚀 Starting Reativa BullMQ worker...");
+console.log("Starting Reativa BullMQ worker...");
 
 const worker = startWorker();
 
-worker.on("completed", (job) => {
-  console.log(`✅ Job ${job.id} completed`);
-});
+if (worker) {
+  worker.on("completed", (job) => {
+    console.log(`Job ${job?.id} completed`);
+  });
 
-worker.on("failed", (job, err) => {
-  console.error(`❌ Job ${job?.id} failed:`, err.message);
-});
+  worker.on("failed", (job, err) => {
+    console.error(`Job ${job?.id} failed:`, err.message);
+  });
 
-worker.on("error", (err) => {
-  console.error("Worker error:", err);
-});
+  worker.on("error", (err) => {
+    console.error("Worker error:", err);
+  });
 
-process.on("SIGTERM", async () => {
-  console.log("SIGTERM received — closing worker...");
-  await worker.close();
-  process.exit(0);
-});
+  process.on("SIGTERM", async () => {
+    console.log("SIGTERM received — closing worker...");
+    await worker.close();
+    process.exit(0);
+  });
 
-process.on("SIGINT", async () => {
-  console.log("SIGINT received — closing worker...");
-  await worker.close();
-  process.exit(0);
-});
+  process.on("SIGINT", async () => {
+    console.log("SIGINT received — closing worker...");
+    await worker.close();
+    process.exit(0);
+  });
 
-console.log("✅ Worker running. Press Ctrl+C to stop.");
+  console.log("Worker running. Press Ctrl+C to stop.");
+} else {
+  console.error("Failed to start worker — check REDIS_URL env var.");
+  process.exit(1);
+}
