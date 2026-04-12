@@ -11,6 +11,8 @@ import { useAuth } from "@/lib/auth-context";
 import {
   getReactivationsByMonth,
   getRevenueByMonth,
+  type MonthlyPoint,
+  type RevenuePoint,
 } from "@/lib/queries/dashboard";
 
 interface CampaignStat {
@@ -33,8 +35,8 @@ function getSupabase() {
 export default function RelatoriosPage() {
   const { user } = useAuth();
 
-  const [monthly, setMonthly] = useState<{ month: string; total: number }[]>([]);
-  const [revenue, setRevenue] = useState<{ month: string; receita: number }[]>([]);
+  const [monthly, setMonthly] = useState<MonthlyPoint[]>([]);
+  const [revenue, setRevenue] = useState<RevenuePoint[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignStat[]>([]);
   const [totalContacts, setTotalContacts] = useState(0);
   const [reactivatedCount, setReactivatedCount] = useState(0);
@@ -101,8 +103,8 @@ export default function RelatoriosPage() {
     receita: revenue[i]?.receita ?? 0,
   }));
 
-  const totalRevenue = revenue.reduce((a, b) => a + b.receita, 0);
-  const totalReactivations = monthly.reduce((a, b) => a + b.total, 0);
+  const totalRevenue = revenue.reduce((a: number, b: RevenuePoint) => a + b.receita, 0);
+  const totalReactivations = monthly.reduce((a: number, b: MonthlyPoint) => a + b.total, 0);
   const avgPerContact = totalReactivations > 0 ? Math.round(totalRevenue / totalReactivations) : 0;
   const reactivationRate = totalContacts > 0 ? Math.round((reactivatedCount / totalContacts) * 100) : 0;
 
