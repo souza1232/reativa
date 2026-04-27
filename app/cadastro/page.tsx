@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
-import { sendWelcomeEmail } from "@/lib/email";
 
 const segments = [
   { value: "clinica", label: "Clínica / Saúde" },
@@ -70,9 +69,7 @@ export default function CadastroPage() {
         // Non-blocking — user still created
       }
 
-      // 3. Send welcome email (non-blocking)
-      sendWelcomeEmail(form.email, form.companyName).catch(() => {});
-
+      // 3. Welcome email sent server-side via webhook
       document.cookie = "reativa_session=true; path=/; max-age=86400";
       router.push("/dashboard");
     } catch {
